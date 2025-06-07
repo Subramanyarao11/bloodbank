@@ -4,26 +4,29 @@ import {
   IsNotEmpty,
   IsEnum,
   IsOptional,
-  MinLength,
+  ValidateIf,
 } from 'class-validator';
-import { UserRole } from '../entities/user.entity';
+import { UserRole } from '../../users/entities/user.entity';
 
 @InputType()
-export class CreateUserInput {
+export class RegisterInput {
   @Field(() => UserRole)
   @IsEnum(UserRole)
   role: UserRole;
 
   @Field({ nullable: true })
-  @IsOptional()
+  @ValidateIf((o) => o.role === UserRole.DONOR)
+  @IsNotEmpty({ message: 'Name is required for donors' })
   name?: string;
 
   @Field({ nullable: true })
-  @IsOptional()
+  @ValidateIf((o) => o.role === UserRole.ORGANISATION)
+  @IsNotEmpty({ message: 'Organisation name is required for organisations' })
   organisationName?: string;
 
   @Field({ nullable: true })
-  @IsOptional()
+  @ValidateIf((o) => o.role === UserRole.HOSPITAL)
+  @IsNotEmpty({ message: 'Hospital name is required for hospitals' })
   hospitalName?: string;
 
   @Field()
@@ -32,7 +35,6 @@ export class CreateUserInput {
 
   @Field()
   @IsNotEmpty()
-  @MinLength(8, { message: 'Password must be at least 8 characters long' })
   password: string;
 
   @Field({ nullable: true })

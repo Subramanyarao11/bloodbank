@@ -3,9 +3,15 @@
 # ------------------------------------------------------
 
 input CreateUserInput {
+  address: String!
   email: String!
-  firstName: String!
-  lastName: String!
+  hospitalName: String
+  name: String
+  organisationName: String
+  password: String!
+  phone: String!
+  role: UserRole!
+  website: String
 }
 
 """
@@ -20,21 +26,43 @@ type Mutation {
 }
 
 type Query {
+  donars: [User!]!
+  hospitals: [User!]!
+  organisations: [User!]!
   user(id: ID!): User!
   users: [User!]!
 }
 
 input UpdateUserInput {
+  address: String
   email: String
-  firstName: String
-  lastName: String
+  hospitalName: String
+  name: String
+  organisationName: String
+  password: String
+  phone: String
+  role: UserRole
+  website: String
 }
 
 type User {
+  address: String!
   createdAt: DateTime!
   email: String!
-  firstName: String!
+  hospitalName: String
   id: ID!
-  lastName: String!
+  name: String
+  organisationName: String
+  phone: String!
+  role: UserRole!
   updatedAt: DateTime!
+  website: String
+}
+
+"""User roles in the blood bank system"""
+enum UserRole {
+  ADMIN
+  DONOR
+  HOSPITAL
+  ORGANISATION
 }

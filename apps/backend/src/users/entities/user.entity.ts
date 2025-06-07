@@ -1,4 +1,4 @@
-import { ObjectType, Field, ID } from '@nestjs/graphql';
+import { ObjectType, Field, ID, registerEnumType } from '@nestjs/graphql';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,6 +6,19 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+
+export enum UserRole {
+  ADMIN = 'admin',
+  ORGANISATION = 'organisation',
+  DONOR = 'donor',
+  HOSPITAL = 'hospital',
+}
+
+registerEnumType(UserRole, {
+  name: 'UserRole',
+  description: 'User roles in the blood bank system',
+});
 
 @ObjectType()
 @Entity('users')
@@ -14,17 +27,49 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @Field(() => UserRole)
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.DONOR,
+  })
+  role: UserRole;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  name?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  organisationName?: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  hospitalName?: string;
+
   @Field()
   @Column({ unique: true })
+  @IsNotEmpty()
+  @IsString()
   email: string;
 
-  @Field()
-  @Column()
-  firstName: string;
+  @Column({ nullable: false })
+  @IsNotEmpty()
+  @IsString()
+  @MinLength(6, { message: 'Password must be at least 6 characters long' })
+  password: string;
+
+  @Field({ nullable: true })
+  @Column({ nullable: true })
+  website?: string;
 
   @Field()
   @Column()
-  lastName: string;
+  address: string;
+
+  @Field()
+  @Column()
+  phone: string;
 
   @Field()
   @CreateDateColumn()
