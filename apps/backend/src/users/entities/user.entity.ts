@@ -5,8 +5,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { Inventory } from 'src/inventory/entities/inventory.entity';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -70,6 +72,22 @@ export class User {
   @Field()
   @Column()
   phone: string;
+
+  @Field(() => [Inventory], { nullable: true })
+  @OneToMany(() => Inventory, (inventory) => inventory.donar, {
+    nullable: true,
+  })
+  donatedInventory?: Inventory[];
+
+  @Field(() => [Inventory], { nullable: true })
+  @OneToMany(() => Inventory, (inventory) => inventory.hospital, {
+    nullable: true,
+  })
+  receivedInventory?: Inventory[];
+
+  @Field(() => [Inventory], { nullable: true })
+  @OneToMany(() => Inventory, (inventory) => inventory.organisation)
+  organisationInventory?: Inventory[];
 
   @Field()
   @CreateDateColumn()

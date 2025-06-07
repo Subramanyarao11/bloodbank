@@ -2,6 +2,45 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthResponse {
+  message: String!
+  success: Boolean!
+  token: String!
+  user: User!
+}
+
+enum BloodGroup {
+  AB_NEGATIVE
+  AB_POSITIVE
+  A_NEGATIVE
+  A_POSITIVE
+  B_NEGATIVE
+  B_POSITIVE
+  O_NEGATIVE
+  O_POSITIVE
+}
+
+type BloodGroupAnalytics {
+  bloodGroupData: [BloodGroupData!]!
+  message: String!
+  success: Boolean!
+}
+
+type BloodGroupData {
+  availableBlood: Int!
+  bloodGroup: BloodGroup!
+  totalIn: Int!
+  totalOut: Int!
+}
+
+input CreateInventoryInput {
+  bloodGroup: BloodGroup!
+  email: String!
+  inventoryType: InventoryType!
+  organisationId: String!
+  quantity: Int!
+}
+
 input CreateUserInput {
   address: String!
   email: String!
@@ -19,18 +58,74 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type Inventory {
+  bloodGroup: BloodGroup!
+  createdAt: DateTime!
+  donar: User
+  email: String!
+  hospital: User
+  id: ID!
+  inventoryType: InventoryType!
+  organisation: User!
+  quantity: Int!
+  updatedAt: DateTime!
+}
+
+input InventoryFiltersInput {
+  bloodGroup: BloodGroup
+  donarId: String
+  hospitalId: String
+  inventoryType: InventoryType
+  organisationId: String
+}
+
+enum InventoryType {
+  IN
+  OUT
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+  role: UserRole!
+}
+
 type Mutation {
+  createInventory(createInventoryInput: CreateInventoryInput!): Inventory!
   createUser(createUserInput: CreateUserInput!): User!
+  login(loginInput: LoginInput!): AuthResponse!
+  register(registerInput: RegisterInput!): AuthResponse!
   removeUser(id: ID!): Boolean!
   updateUser(id: ID!, updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
+  bloodGroupAnalytics: BloodGroupAnalytics!
+  currentUser: User!
   donars: [User!]!
   hospitals: [User!]!
+  inventory: [Inventory!]!
+  inventoryDonars: [User!]!
+  inventoryHospitals: [User!]!
+  inventoryWithFilters(filters: InventoryFiltersInput!): [Inventory!]!
   organisations: [User!]!
+  organisationsForDonar: [User!]!
+  organisationsForHospital: [User!]!
+  recentInventory: [Inventory!]!
   user(id: ID!): User!
   users: [User!]!
+}
+
+input RegisterInput {
+  address: String!
+  email: String!
+  hospitalName: String
+  name: String
+  organisationName: String
+  password: String!
+  phone: String!
+  role: UserRole!
+  website: String
 }
 
 input UpdateUserInput {
@@ -48,12 +143,15 @@ input UpdateUserInput {
 type User {
   address: String!
   createdAt: DateTime!
+  donatedInventory: [Inventory!]
   email: String!
   hospitalName: String
   id: ID!
   name: String
+  organisationInventory: [Inventory!]
   organisationName: String
   phone: String!
+  receivedInventory: [Inventory!]
   role: UserRole!
   updatedAt: DateTime!
   website: String

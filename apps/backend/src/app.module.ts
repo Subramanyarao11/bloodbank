@@ -6,6 +6,9 @@ import { join } from 'path';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './users/entities/user.entity';
+import { AuthModule } from './auth/auth.module';
+import { InventoryModule } from './inventory/inventory.module';
+import { Inventory } from './inventory/entities/inventory.entity';
 
 @Module({
   imports: [
@@ -21,7 +24,7 @@ import { User } from './users/entities/user.entity';
         username: configService.get('DATABASE_USERNAME'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [User],
+        entities: [User, Inventory],
         synchronize: configService.get('NODE_ENV') === 'development',
         logging: configService.get('NODE_ENV') === 'development',
       }),
@@ -35,6 +38,8 @@ import { User } from './users/entities/user.entity';
       introspection: true,
     }),
     UsersModule,
+    AuthModule,
+    InventoryModule,
   ],
 })
 export class AppModule {}
